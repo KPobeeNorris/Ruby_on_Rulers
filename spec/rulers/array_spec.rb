@@ -1,3 +1,5 @@
+require "./lib/rulers/array.rb"
+
 RSpec.describe Array do
 
   describe '#sum' do
