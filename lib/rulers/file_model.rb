@@ -1,4 +1,5 @@
 require "multi_json"
+
 module Rulers
   module Model
     class FileModel
@@ -50,10 +51,6 @@ TEMPLATE
         hash["quote"]       = attrs["quote"]       || ""
         hash["attribution"] = attrs["attribution"] || ""
 
-        id = id.to_i
-
-        # @hash = MultiJson.dump(attrs)
-
         File.open("db/quotes/#{id}.json", "w") do |f|
           f.write <<TEMPLATE
 {
@@ -73,9 +70,23 @@ TEMPLATE
         end
       end
 
+      def self.find_all_by_submitter
+        quotes = []
+        files = Dir["db/quotes/*.json"]
+        files.each do |file|
+          id = file
+          file = File.read(file)
+          data = JSON.parse(file)
+          if data["submitter"] == "Pete"
+            quotes << id
+          end
+        end
+        quotes.map { |q| FileModel.new(q)}
+      end
+
       def self.all
         files = Dir["db/quotes/*.json"]
-        files.map { |f| FileModel.new(f)}
+        files.map { |f| FileModel.new(f) }
       end
     end
   end
